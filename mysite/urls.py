@@ -158,7 +158,6 @@ urlpatterns = patterns('',
         # Customs-related URLs
         (r'^customs/$', 'mysite.customs.views.list_trackers'),
         (r'^customs/add/(?P<tracker_type>\w*)$', 'mysite.customs.views.add_tracker'),
-        (r'^customs/add/(?P<tracker_type>\w*)/do$', 'mysite.customs.views.add_tracker_do'),
         (r'^customs/add/(?P<tracker_type>\w*)/(?P<tracker_name>[^/]+)/url$', 'mysite.customs.views.add_tracker_url'),
         (r'^customs/add/(?P<tracker_type>\w*)/(?P<tracker_name>.+)/url/do$', 'mysite.customs.views.add_tracker_url_do'),
         (r'^customs/edit/(?P<tracker_type>\w*)/(?P<tracker_name>.+)/url/(?P<url_id>\d*)/do$', 'mysite.customs.views.edit_tracker_url_do'),

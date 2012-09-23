@@ -62,10 +62,13 @@ def list_trackers(request, tracker_types_form=None):
 
 @login_required
 def add_tracker(request, tracker_type, tracker_form=None):
+    if request.POST:
+        return add_tracker_do(request, tracker_type)
+
     data = {}
     if tracker_type in all_trackers:
         data['tracker_type_pretty'] = all_trackers[tracker_type]['namestr']
-        data['action_url'] = reverse(add_tracker_do, args=[tracker_type])
+        data['action_url'] = reverse(add_tracker, args=[tracker_type])
 
         if tracker_form is None:
             # This is what we'll pass in to the form. By default: blank.
