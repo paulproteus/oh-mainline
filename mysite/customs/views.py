@@ -174,6 +174,9 @@ def add_tracker_url_do(request, tracker_type, tracker_name):
 
 @login_required
 def edit_tracker(request, tracker_type, tracker_name, tracker_form=None):
+    if request.POST:
+        return edit_tracker_do(request, tracker_type, tracker_name)
+
     data = {}
     if tracker_type in all_trackers:
         try:
