@@ -120,6 +120,8 @@ def add_tracker_do(request, tracker_type):
 
 @login_required
 def add_tracker_url(request, tracker_type, tracker_name, url_form=None):
+    if request.POST:
+        return add_tracker_url_do(request, tracker_type, tracker_name)
     data = {}
     if tracker_type in all_trackers and (
         url_form or all_trackers[tracker_type].get('urlform', None)):
@@ -136,8 +138,8 @@ def add_tracker_url(request, tracker_type, tracker_name, url_form=None):
         data['url_form'] = url_form
         data['tracker_name'] = tracker_name
         data['cancel_url'] = reverse(edit_tracker, args=[tracker_type, tracker_name])
-        data['add_more_url'] = reverse(add_tracker_url_do, args=[tracker_type, tracker_name])
-        data['finish_url'] = reverse(add_tracker_url_do, args=[tracker_type, tracker_name])
+        data['add_more_url'] = reverse(add_tracker_url, args=[tracker_type, tracker_name])
+        data['finish_url'] = reverse(add_tracker_url, args=[tracker_type, tracker_name])
         data['finish_url'] += '?finished=true'
         return mysite.base.decorators.as_view(request, 'customs/add_tracker_url.html', data, None)
     else:
