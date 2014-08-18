@@ -277,7 +277,7 @@ class SignupWithNoPassword(TransactionTwillTests):
             reverse(mysite.account.views.signup_do), POST_data)
         form = response.context['form']
         self.assertFalse(form.is_valid())
-        self.assertEqual(User.objects.filter(username='mister_robot').count(), 0)
+        self.assertEqual(User.objects.filter(username='mister_roboto').count(), 0)
 
 
 class LoginPageContainsUnsavedAnswer(TwillTests):
