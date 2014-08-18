@@ -23,7 +23,7 @@ import StringIO
 import logging
 
 from mysite.profile.models import Person
-from mysite.base.tests import make_twill_url, TwillTests
+from mysite.base.tests import make_twill_url, TwillTests, TransactionTwillTests
 import mysite.account.forms
 from mysite.search.models import Project, ProjectInvolvementQuestion
 import mysite.project.views
@@ -40,7 +40,7 @@ import mysite.base.depends
 #}}}
 
 
-class Login(TwillTests):
+class Login(TransactionTwillTests):
     # {{{
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
@@ -83,7 +83,7 @@ class Login(TwillTests):
     # }}}
 
 
-class ProfileGetsCreatedWhenUserIsCreated(TwillTests):
+class ProfileGetsCreatedWhenUserIsCreated(TransactionTwillTests):
 
     """django-authopenid only creates User objects, but we need Person objects
     in all such cases. Test that creating a User will automatically create
@@ -176,7 +176,7 @@ def photo(f):
 
 
 @skipIf(not mysite.base.depends.Image, "Skipping photo-related tests because PIL is missing. Look in ADVANCED_INSTALLATION.mkd for information.")
-class EditPhoto(TwillTests):
+class EditPhoto(TransactionTwillTests):
     #{{{
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
@@ -244,43 +244,11 @@ class EditPhoto(TwillTests):
             self.assertFalse(p.photo.name)
         finally:
             os.unlink(bad_image.name)
-
-    def test_image_processing_library_error(self):
-        """
-        If the image processing library errors while preparing a photo, report a
-        helpful message to the user and log the error. The photo is not added
-        to the user's profile.
-        """
-        # Get a copy of the error log.
-        string_log = StringIO.StringIO()
-        logger = logging.getLogger()
-        my_log = logging.StreamHandler(string_log)
-        logger.addHandler(my_log)
-        logger.setLevel(logging.ERROR)
-
-        self.login_with_twill()
-        tc.go(make_twill_url('http://openhatch.org/people/paulproteus/'))
-        tc.follow('photo')
-        # This is a special image from issue166 that passes Django's image
-        # validation tests but causes an exception during zlib decompression.
-        tc.formfile('edit_photo', 'photo',
-                    photo('static/images/corrupted.png'))
-        tc.submit()
-        tc.code(200)
-
-        self.assert_("Something went wrong while preparing this" in tc.show())
-        p = Person.objects.get(user__username='paulproteus')
-        self.assertFalse(p.photo.name)
-
-        # an error message was logged during photo processing.
-        self.assert_("zlib.error" in string_log.getvalue())
-        logger.removeHandler(my_log)
-
     #}}}
 
 
 @skipIf(not mysite.base.depends.Image, "Skipping photo-related tests because PIL is missing. Look in ADVANCED_INSTALLATION.mkd for information.")
-class EditPhotoWithOldPerson(TwillTests):
+class EditPhotoWithOldPerson(TransactionTwillTests):
     #{{{
     fixtures = ['user-paulproteus', 'person-paulproteus-with-blank-photo']
 
@@ -301,7 +269,7 @@ class EditPhotoWithOldPerson(TwillTests):
 
 
 
-class SignupWithNoPassword(TwillTests):
+class SignupWithNoPassword(TransactionTwillTests):
 
     def test(self):
         POST_data = {'username': 'mister_roboto'}
@@ -309,7 +277,7 @@ class SignupWithNoPassword(TwillTests):
             reverse(mysite.account.views.signup_do), POST_data)
         form = response.context['form']
         self.assertFalse(form.is_valid())
-        self.assertEqual(User.objects.count(), 0)
+        self.assertEqual(User.objects.filter(username='mister_robot').count(), 0)
 
 
 class LoginPageContainsUnsavedAnswer(TwillTests):

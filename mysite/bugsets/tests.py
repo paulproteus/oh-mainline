@@ -192,7 +192,7 @@ class BasicBugsetListViewTests(TwillTests):
         self.assertContains(response, "python, html")
 
 
-class SecurityBugsetListViewTests(TwillTests):
+class SecurityBugsetListViewTests(TransactionTwillTests):
     def test_will_inplaceedit_allow_us_to_pwn_ourselves(self):
         # Asheesh: "total cost of pwnership: 1 test"
         # note: user paulproteus has poor password hygiene

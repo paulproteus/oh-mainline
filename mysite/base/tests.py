@@ -339,7 +339,7 @@ class EnhanceNextWithNewUserMetadata(TwillTests):
         self.assertEqual(wanted, got)
 
 
-class Unsubscribe(TwillTests):
+class Unsubscribe(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test_verify_unsubscribe_token(self):
