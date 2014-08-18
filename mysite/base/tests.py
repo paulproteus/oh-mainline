@@ -70,7 +70,7 @@ mock_get = mock.Mock()
 mock_get.return_value = None
 
 
-class TwillTests(django.test.TestCase):
+class TransactionTwillTests(django.test.TransactionTestCase):
 
     @staticmethod
     def _twill_setup():
@@ -86,13 +86,14 @@ class TwillTests(django.test.TestCase):
     '''Some basic methods needed by other testing classes.'''
 
     def setUp(self):
+        super(TransactionTwillTests, self).setUp()
         self.real_get = django.core.cache.cache.get
         django.core.cache.cache.get = mock_get
         from django.conf import settings
         self.old_dbe = settings.DEBUG_PROPAGATE_EXCEPTIONS
         settings.DEBUG_PROPAGATE_EXCEPTIONS = True
-        TwillTests._twill_setup()
-        TwillTests._twill_quiet()
+        TransactionTwillTests._twill_setup()
+        TransactionTwillTests._twill_quiet()
 
     def tearDown(self):
         # If you get an error on one of these lines,
@@ -102,6 +103,7 @@ class TwillTests(django.test.TestCase):
         twill.remove_wsgi_intercept('127.0.0.1', 8080)
         tc.reset_browser()
         django.core.cache.cache.get = self.real_get
+        super(TransactionTwillTests, self).tearDown()
 
     def login_with_twill(self):
         # Visit login page
@@ -129,6 +131,9 @@ class TwillTests(django.test.TestCase):
     def signup_with_twill(self, username, email, password):
         """ Used by account.tests.Signup, which is omitted while we use invite codes. """
         pass
+
+class TwillTests(django.test.TestCase, TransactionTwillTests):
+    pass  # exists merely to merge TestCase with TwillTests
 
 
 class MySQLRegex(TwillTests):

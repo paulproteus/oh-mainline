@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mysite.base.tests import make_twill_url, TwillTests
+from mysite.base.tests import make_twill_url, TwillTests, TransactionTwillTests
 import mysite.base.models
 
 import mysite.account.tests
@@ -172,8 +172,8 @@ class TestThatQueryTokenizesRespectingQuotationMarks(TwillTests):
         self.assertEqual(num_bugs, 1)
 
 
-class SearchResults(TwillTests):
-    fixtures = [u'bugs-for-two-projects.json']
+class SearchResults(TransactionTwillTests):
+    fixtures = [u'bugs-for-two-projects']
 
     @skipIf(django.db.connection.vendor == 'sqlite', "Skipping because using sqlite database")
     def test_query_object_is_false_when_no_terms_or_facets(self):
@@ -203,10 +203,19 @@ class SearchResults(TwillTests):
         self.assert_(u'pk' in objects[0][u'bugs'][0])
 
     @skipIf(django.db.connection.vendor == 'sqlite', "Skipping because using sqlite database")
-    def testPagination(self):
+    def test_pagination(self):
+        # With MySQL and TwillTests, Twill could end up on a different
+        # transaction than the loaddata that is performed by the
+        # Django test.
+        #
+        # This will lead tc.go() to not be able to find the data inserted
+        # during the fixture load. To work around that, we explicitly
+        # commit:
+        django.db.connection.commit()
+
         url = u'http://openhatch.org/search/'
         tc.go(make_twill_url(url))
-        tc.fv(u'search_opps', u'q', u'python')
+        tc.fv(u'search_opps', u'q', u'Python')
         tc.submit()
 
         # Grab descriptions of first 10 Exaile bugs
@@ -228,6 +237,7 @@ class SearchResults(TwillTests):
 
     @skipIf(django.db.connection.vendor == 'sqlite', "Skipping because using sqlite database")
     def testPaginationWithAnyFacet(self):
+        django.db.connection.commit()
 
         url = u'http://openhatch.org/search/?q=&language='
         tc.go(make_twill_url(url))
@@ -247,6 +257,7 @@ class SearchResults(TwillTests):
 
     @skipIf(django.db.connection.vendor == 'sqlite', "Skipping because using sqlite database")
     def testPaginationAndChangingSearchQuery(self):
+        django.db.connection.commit()
 
         url = u'http://openhatch.org/search/'
         tc.go(make_twill_url(url))
