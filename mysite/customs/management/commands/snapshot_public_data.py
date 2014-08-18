@@ -21,7 +21,7 @@ from mysite.search.models import Bug, Project
 from mysite.profile.models import Person, Tag, TagType, Link_Person_Tag
 from mysite.base.models import Timestamp
 import sys
-from django.utils import simplejson
+import json
 from django.core.management.base import BaseCommand
 import django.core.serializers
 import django.core.serializers.json
@@ -151,6 +151,8 @@ class Command(BaseCommand):
             query_set=Link_Person_Tag.objects.all())
         data.extend(public_persons_tags_links)
 
+        # Now, loop over data, looking for named tuples.
+
         # anyway, now we stream all this data out using simplejson
-        simplejson.dump(data, output,
+        json.dump(data, output,
                         cls=django.core.serializers.json.DjangoJSONEncoder)
