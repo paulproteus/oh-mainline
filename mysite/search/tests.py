@@ -1063,12 +1063,13 @@ class TestPotentialMentors(TwillTests):
         self.assertEqual(2, banshee_mentor_count)
 
 
-class SuggestAlertOnLastResultsPage(TwillTests):
-    fixtures = ['user-paulproteus']
+class SuggestAlertOnLastResultsPage(TransactionTwillTests):
+    fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def exercise_alert(self, anonymous=True):
         """The 'anonymous' parameter allows the alert functionality to be
         tested for anonymous and logged-in users."""
+        django.db.connection.commit()
 
         if not anonymous:
             self.login_with_twill()
