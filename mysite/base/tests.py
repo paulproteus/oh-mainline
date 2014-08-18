@@ -95,6 +95,9 @@ class TransactionTwillTests(django.test.TransactionTestCase):
         TransactionTwillTests._twill_setup()
         TransactionTwillTests._twill_quiet()
 
+        # Always commit.
+        django.db.connection.commit()
+
     def tearDown(self):
         # If you get an error on one of these lines,
         # maybe you didn't run base.TwillTests.setUp?
