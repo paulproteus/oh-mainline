@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mysite.base.tests import make_twill_url, better_make_twill_url, TwillTests
+from mysite.base.tests import make_twill_url, better_make_twill_url, TwillTests, TransactionTwillTests
 from mysite.base.view_helpers import ObjectFromDict
 from mysite.base.models import Timestamp
 import mysite.account.tests
@@ -142,7 +142,7 @@ class DebTagsTests(TwillTests):
 # repository history.
 
 
-class Info(TwillTests):
+class Info(TransactionTwillTests):
     # {{{
     fixtures = ['user-paulproteus', 'user-barry', 'person-barry',
                 'person-paulproteus', 'cchost-data-imported-from-ohloh']
@@ -255,7 +255,7 @@ stumps_project_lookup.return_value = {
     u'name': u'WinKexec', u'homepage_url': u'https://www.jstump.com/projects/kexec/'}
 
 
-class UserListTests(TwillTests):
+class UserListTests(TransactionTwillTests):
     # {{{
     fixtures = ['user-paulproteus', 'person-paulproteus',
                 'user-barry', 'person-barry']
@@ -548,7 +548,7 @@ mock_launchpad_debian_response.return_value = {
 }
 
 
-class PersonInfoLinksToSearch(TwillTests):
+class PersonInfoLinksToSearch(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test_whatever(self):
@@ -1184,7 +1184,7 @@ class SuggestLocation(TwillTests):
         self.assertEqual(data['geoip_guess'], correct_decoding)
 
 
-class EditBio(TwillTests):
+class EditBio(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test(self):
@@ -1214,7 +1214,7 @@ class EditBio(TwillTests):
         tc.find('lookatme!')
 
 
-class EditHomepage(TwillTests):
+class EditHomepage(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test(self):
@@ -1253,7 +1253,7 @@ class EditHomepage(TwillTests):
         tc.notfind('htttp')
 
 
-class EditIrcNick(TwillTests):
+class EditIrcNick(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test(self):
@@ -1282,7 +1282,7 @@ class EditIrcNick(TwillTests):
         tc.find('paulproteusnick')
 
 
-class EditContactBlurbForwarderification(TwillTests):
+class EditContactBlurbForwarderification(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test(self):
@@ -1319,7 +1319,7 @@ class EditContactBlurbForwarderification(TwillTests):
         self.assertEqual(mystr_forwarderified, output)
 
 
-class EditContactBlurb(TwillTests):
+class EditContactBlurb(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus']
 
     def test(self):

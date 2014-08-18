@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mysite.base.tests import TwillTests
+from mysite.base.tests import TwillTests, TransactionTwillTests
 import mysite.project.view_helpers
 import mysite.account.tests
 
@@ -34,6 +34,7 @@ import urlparse
 import datetime
 
 from django.core.urlresolvers import reverse
+import django.db
 
 from twill import commands as tc
 
@@ -368,7 +369,7 @@ class OffsiteAnonymousWannaHelpWorks(TwillTests):
         self.assertEqual([k.name for k in lucky_projects], ['Myproject'])
 
 
-class DecideWhichProjectDescriptionsAppearOnProjectPage(TwillTests):
+class DecideWhichProjectDescriptionsAppearOnProjectPage(TransactionTwillTests):
     fixtures = ['user-paulproteus', 'person-paulproteus',
                 'user-barry', 'person-barry']
 
@@ -380,10 +381,13 @@ class DecideWhichProjectDescriptionsAppearOnProjectPage(TwillTests):
         # Create two profiles, each with a PortfolioEntry linking it to the
         # project, each with descriptions.
         def create_pfe_with_description(username):
-            return PortfolioEntry.create_dummy(project=project,
-                                               person=Person.get_by_username(
-                                                   username),
-                                               is_published=True)
+            pfe = PortfolioEntry.create_dummy(project=project,
+                                              person=Person.get_by_username(
+                                                  username),
+                                              is_published=True)
+            django.db.connection.commit()
+            return pfe
+
         pfes = {'uncheck_me': create_pfe_with_description('paulproteus'),
                 'keep_me_checked': create_pfe_with_description('barry')}
 
