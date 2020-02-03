@@ -136,7 +136,7 @@ MEDIA_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'k%&pic%c5%6$%(h&eynhgwhibe9-h!_iq&(@ktx#@1-5g2+he)'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'k%&pic%c5%6$%(h&eynhgwhibe9-h!_iq&(@ktx#@1-5g2+he)')
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -192,7 +192,7 @@ STATIC_DOC_ROOT = 'static/'
 # Sessions in /tmp
 # mysite.account.view_helpers.clear_user_sessions assumes the DB backend, it
 # will not work otherwise
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
 INSTALLED_APPS = (
     'ghettoq',
